@@ -14,15 +14,15 @@ router.post('/test', function(req, res) {
 router.post('/userInfo', function(req, res) {
     console.log(req.cookies.token);
     authService.getUserInfo(req.cookies.token, function(err, result) {
-       if (err) {
+       if ( err || result.length === 0 ) {
            console.log(err);
            res.send({
                message: 21
            });
-       } else {
+       } else  {
            res.send({
                message: 20,
-               data: result
+               data: result[0]
            })
        }
     });
@@ -47,5 +47,24 @@ router.post('/signUp', function(req, res) {
         }
     })
 });
-
+router.post('/signIn', function(req, res) {
+    const username = req.body.username;
+    const password = req.body.password;
+    console.log(username);
+    console.log(password);
+    authService.signIn(username, password, function(err, result, message, token) {
+        if(message === 20) {
+            res.send({
+                message: 20,
+                token: token
+            }).end();
+        } else if (message === 21) {
+            res.send({
+                message: 21
+            }).end();
+        } else {
+            res.status(500).send('Wrong with the database.').end();
+        }
+    })
+});
 module.exports = router;

@@ -21,6 +21,23 @@ exports.signUp = function (vo, callback) {
 
 };
 
+exports.signIn = function (username, password, callback) {
+    var sql = '' +
+        'SELECT userId FROM login WHERE username = ? AND password = ?';
+    var param = [username, password];
+    database.query(sql, param, function (err, result) {
+        if (err) {
+            callback(err, result);
+        } else {
+            if (result.length === 0){
+                callback(err, result, 21);
+            } else {
+                callback(err, result, 20, createToken(username))
+            }
+        }
+    })
+};
+
 exports.getUserInfo = function (token, callback) {
     var sql = '' +
         'SELECT * FROM users WHERE userId IN' +
