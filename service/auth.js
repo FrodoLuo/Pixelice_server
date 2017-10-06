@@ -27,12 +27,22 @@ exports.signIn = function (username, password, callback) {
     var param = [username, password];
     database.query(sql, param, function (err, result) {
         if (err) {
-            callback(err, result);
+            callback(err, result, 22);
         } else {
             if (result.length === 0){
                 callback(err, result, 21);
             } else {
-                callback(err, result, 20, createToken(username))
+                var token = createToken(username);
+                sql = '' +
+                    'UPDATE login SET token = ? WHERE userId = ?';
+                param = [token, result[0].userId];
+                database.query(sql, param, function(err, result) {
+                    if(err){
+                        callback(err, result , 22);
+                    } else {
+                        callback(err, result , 20, token);
+                    }
+                })
             }
         }
     })

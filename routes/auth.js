@@ -50,8 +50,6 @@ router.post('/signUp', function(req, res) {
 router.post('/signIn', function(req, res) {
     const username = req.body.username;
     const password = req.body.password;
-    console.log(username);
-    console.log(password);
     authService.signIn(username, password, function(err, result, message, token) {
         if(message === 20) {
             res.send({
