@@ -14,3 +14,17 @@ exports.CONNECTION_SERVER = {
     password : 'lyz19960920',
     database : 'pixelice'
 };
+exports.MAIL_POOL_CONFIG = {
+    pool: true,
+    host: 'smtp.fstudio.top',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'accountmanage@fstudio.top',
+        pass: 'LUOYUZHOU_1996'
+    },
+    tls: {
+        // do not fail on invalid certs
+        rejectUnauthorized: false
+    }
+};
