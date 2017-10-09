@@ -1,4 +1,5 @@
 var database = require('./dbconnect');
+var mailer = require('./mailService');
 var md5 = require('md5');
 
 exports.signUp = function (vo, callback) {
@@ -55,8 +56,63 @@ exports.getUserInfo = function (token, callback) {
     var param = [token];
     database.query(sql, param, callback);
 };
+exports.sendVerify = function (token, callback){
+    var sql = '' +
+        'SELECT userId FROM login WHERE token=?';
+    var param = [token];
+    database.query(sql, param, function(err, result) {
+        if(err){
+            callback(err, result, 50);
+        }else if(result.length===0){
+            callback(err, result, 21);
+        }else{
+            sql = 'REPLACE INTO verify (userId, verifyCode) VALUE(?,?)';
+            const userId = result[0].userId;
+            const verifyCode = createVerifyCode();
+            param = [userId, verifyCode];
+            database.query(sql,param,function (err, result) {
+                if(err){
+                    console.log(err);
+                    callback(err, result, 50);
+                } else {
+                    sql = 'SELECT email FROM users WHERE userId = ?';
+                    param = [userId];
+                    database.query(sql, param, function(err, result){
+                        console.log(result);
+                        mailer.sendVerify(result[0].email, verifyCode, function(err, result){
+                            if(err){
+                                callback(err, result, 50);
+                            }else{
+                                console.log(result);
+                                callback(err, result, 20);
+                            }
+                        })
+                    });
+                }
+            })
+        }
+    })
+};
+exports.verify = function(verifyCode, callback) {
+    var sql = 'SELECT userId FROM verify WHERE verifyCode = ?';
+    var param = [verifyCode];
+    database.query(sql, param, function (err, result) {
+       if(err || result.length === 0){
+           callback(err, result, 21);
+       } else {
+           console.log(result[0].userId);
+           sql = 'UPDATE users SET verified = ? WHERE userId = ?';
+           param = [true, result[0].userId];
+           database.query(sql,param,callback);
+       }
+    });
+};
 function createToken(username) {
     var string = username + Math.random().toString() + new Date().getSeconds().toString();
     console.log(string);
+    return md5(string);
+}
+function createVerifyCode() {
+    var string = Math.random().toString() + new Date().getSeconds().toString() + Math.random().toString();
     return md5(string);
 }

@@ -11,6 +11,22 @@ router.post('/test', function(req, res) {
         query: req.query
     });
 });
+router.post('/sendVerify', function(req, res) {
+   const token = req.cookies.token;
+   authService.sendVerify(token, function(err, result, message) {
+       if (err) {
+           console.log(err);
+           res.send({
+               message: message
+           });
+       } else {
+           res.send({
+               message: message
+           });
+       }
+       res.end();
+   })
+});
 router.post('/userInfo', function(req, res) {
     console.log(req.cookies.token);
     authService.getUserInfo(req.cookies.token, function(err, result) {
@@ -64,5 +80,22 @@ router.post('/signIn', function(req, res) {
             res.status(500).send('Wrong with the database.').end();
         }
     })
+});
+router.get('/verify', function(req, res){
+    const verifyCode = req.query.verifyCode;
+    console.log(verifyCode);
+    authService.verify(verifyCode, function(err, result, message) {
+        console.log
+        if(err){
+            console.log(err);
+            res.send('数据库错误');
+        }else{
+            if(message===21){
+                res.send('验证信息错误或已失效, 请重新发送');
+            } else {
+                res.send('验证已完成');
+            }
+        }
+    });
 });
 module.exports = router;
