@@ -14,6 +14,12 @@ exports.CONNECTION_SERVER = {
     password : 'lyz19960920',
     database : 'pixelice'
 };
+exports.CONNECTION_PRODUCTION = {
+    host     : 'localhost',
+    user     : 'root',
+    password : 'LuoyuzhoU1996',
+    database : 'pixelice'
+};
 exports.MAIL_POOL_CONFIG = {
     pool: true,
     host: 'smtp.fstudio.top',
