@@ -63,9 +63,10 @@ exports.sendVerify = function (token, callback){
     database.query(sql, param, function(err, result) {
         if(err){
             callback(err, result, 50);
-        }else if(result.length===0){
+        }else if(result.length===0) {
             callback(err, result, 21);
         }else{
+            console.log(result);
             sql = 'REPLACE INTO verify (userId, verifyCode) VALUE(?,?)';
             const userId = result[0].userId;
             const verifyCode = createVerifyCode();
@@ -75,18 +76,22 @@ exports.sendVerify = function (token, callback){
                     console.log(err);
                     callback(err, result, 50);
                 } else {
-                    sql = 'SELECT email FROM users WHERE userId = ?';
+                    sql = 'SELECT email, verified FROM users WHERE userId = ?';
                     param = [userId];
                     database.query(sql, param, function(err, result){
                         console.log(result);
-                        mailer.sendVerify(result[0].email, verifyCode, function(err, result){
-                            if(err){
-                                callback(err, result, 50);
-                            }else{
-                                console.log(result);
-                                callback(err, result, 20);
-                            }
-                        })
+                        if(result[0].verified==='1'){
+                            callback(err, result, 23);
+                        } else {
+                            mailer.sendVerify(result[0].email, verifyCode, function(err, result){
+                                if(err){
+                                    callback(err, result, 50);
+                                }else{
+                                    console.log(result);
+                                    callback(err, result, 20);
+                                }
+                            });
+                        }
                     });
                 }
             })

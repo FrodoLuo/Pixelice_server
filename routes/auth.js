@@ -85,17 +85,18 @@ router.get('/verify', function(req, res){
     const verifyCode = req.query.verifyCode;
     console.log(verifyCode);
     authService.verify(verifyCode, function(err, result, message) {
-        console.log
+        res.set('Content-Type', 'text/html;charset=utf-8');
         if(err){
             console.log(err);
-            res.send('数据库错误');
+            res.send('<p>数据库错误</p>');
         }else{
             if(message===21){
-                res.send('验证信息错误或已失效, 请重新发送');
+                res.send('<p>验证信息错误或已失效, 请重新发送</p>');
             } else {
-                res.send('验证已完成');
+                res.send('<p>验证已完成</p>');
             }
         }
+        res.end();
     });
 });
 module.exports = router;
