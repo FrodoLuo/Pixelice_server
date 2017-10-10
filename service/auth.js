@@ -58,13 +58,15 @@ exports.getUserInfo = function (token, callback) {
 };
 exports.sendVerify = function (token, callback){
     var sql = '' +
-        'SELECT userId FROM login WHERE token=?';
+        'SELECT userId verified FROM login WHERE token=?';
     var param = [token];
     database.query(sql, param, function(err, result) {
         if(err){
             callback(err, result, 50);
-        }else if(result.length===0){
+        }else if(result.length===0) {
             callback(err, result, 21);
+        }else if(result[0].verified === '1'){
+            callback(err, result, 23)
         }else{
             sql = 'REPLACE INTO verify (userId, verifyCode) VALUE(?,?)';
             const userId = result[0].userId;
