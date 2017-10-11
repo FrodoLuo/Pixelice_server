@@ -3,7 +3,9 @@ var router = express.Router();
 var multiparty = require('multiparty');
 var util = require('util');
 var fs = require('fs');
+var fsHelper = require('../service/file/fshelper');
 
+var database = require('../service/dbconnect');
 var photoService = require('../service/photo');
 
 /* GET users listing. */
@@ -15,20 +17,37 @@ router.get('/photo/:photoId', function(req, res) {
 });
 
 router.post('/upload', function(req, res){
-
+    photoService.upload(req.cookies.token, req.body.list, req.body.info, function(message){
+        res.send({
+            message: message
+        });
+        res.end();
+    });
 });
 router.post('/preUpload', function(req, res){
-    //生成multiparty对象，并配置上传目标路径
-    console.log('here');
-    var form = new multiparty.Form({uploadDir: './public/temp/files/'});
-    //上传完成后处理
-    form.parse(req, function(err, fields, files) {
-        if(err){
-            res.send({message: 21});
-        } else {
-            photoService.preUpload(files.file[0], function(result) {
-                res.send({ message: result.message });
-            })
+    console.log(req.cookies.token);
+    database.checkToken(req.cookies.token, function (err,result) {
+        if(err||result.length===0) {
+            res.send({message: 41});
+            res.end();
+        }else{
+            //生成multiparty对象，并配置上传目标路径
+            const uploadDir = './public/temp/' + result[0].userId + '/files/';
+            var form = new multiparty.Form({uploadDir: uploadDir});
+            if(!fs.existsSync(uploadDir)) {
+                fsHelper.mkdirsSync(uploadDir);
+            }
+            //上传完成后处理
+            form.parse(req, function(err, fields, files) {
+                if(err){
+                    console.log(err);
+                    res.send({message: 21});
+                } else {
+                    photoService.preUpload(files.file[0], uploadDir, function(result) {
+                        res.send({ message: result.message });
+                    })
+                }
+            });
         }
     });
 });

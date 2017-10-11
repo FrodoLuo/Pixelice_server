@@ -34,3 +34,21 @@ exports.MAIL_POOL_CONFIG = {
         rejectUnauthorized: false
     }
 };
+exports.DEV = {
+    CONNECTION_LOCALHOST: {
+        host     : '120.24.225.58',
+        user     : 'admin',
+        password : 'lyz19960920',
+        database : 'pixelice'
+    },
+    RESOURCE_URL: 'http://120.24.225.58/resource/'
+};
+exports.PRODUCTION = {
+    CONNECTION_PRODUCTION: {
+        host     : 'localhost',
+        user     : 'root',
+        password : 'LuoyuzhoU1996',
+        database : 'pixelice'
+    },
+    RESOURCE_URL: 'http://120.24.225.58/resource/'
+};
