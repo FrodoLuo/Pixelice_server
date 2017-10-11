@@ -2,7 +2,7 @@ var mysql      = require('mysql');
 
 var config = require('../config');
 
-var pool = mysql.createPool(config.PRODUCTION);
+var pool = mysql.createPool(config.CONNECTION_PRODUCTION);
 
 exports.query = function query(sql, param, callback) {
     pool.query(sql, param, callback);
