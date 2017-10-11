@@ -24,7 +24,7 @@ exports.sendVerify = function(des, verifyCode, callback) {
        '    亲爱的用户您好： <br />' +
        '    欢迎加入Pixelice, 点击下方连接完成帐号验证.    ' +
        '    <div>' +
-       '        <a href="http://localhost:3000/auth/verify?verifyCode='+verifyCode+'">邮箱验证</a>' +
+       '        <a href="http://120.24.225.58/api/auth/verify?verifyCode='+verifyCode+'">邮箱验证</a>' +
        '    </div>' +
        '    <div>如果您不能打开链接, 请右键复制连接到地址栏并转入.</div>' +
        '    <div>请勿回复此邮箱</div>' +

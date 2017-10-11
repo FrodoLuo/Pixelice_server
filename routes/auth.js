@@ -27,22 +27,6 @@ router.post('/sendVerify', function(req, res) {
        res.end();
    })
 });
-router.post('/userInfo', function(req, res) {
-    console.log(req.cookies.token);
-    authService.getUserInfo(req.cookies.token, function(err, result) {
-       if ( err || result.length === 0 ) {
-           console.log(err);
-           res.send({
-               message: 21
-           });
-       } else  {
-           res.send({
-               message: 20,
-               data: result[0]
-           })
-       }
-    });
-});
 router.post('/signUp', function(req, res) {
     const data = JSON.parse(req.body.vo);
     authService.signUp(data, function (err, result, token) {
