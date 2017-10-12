@@ -4,4 +4,4 @@ function createToken(username) {
     console.log(string);
     return md5(string);
 }
-console.log(createToken('lyz1996'));
+// console.log(createToken('lyz1996'));

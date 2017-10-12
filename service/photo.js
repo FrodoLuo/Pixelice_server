@@ -2,6 +2,7 @@ var database = require('./dbconnect');
 var fs = require('fs');
 var fsHelper = require('./file/fshelper');
 var config = require('../config');
+var images = require('images');
 
 exports.upload = function (token, list, info, callback) {
     console.log(token);
@@ -16,20 +17,36 @@ exports.upload = function (token, list, info, callback) {
             var fromDir = './public/temp/' + userId + '/files/';
             var dstDir = './data/' + userId + '/photos/';
             var dstDir_ = 'data/' + userId + '/photos/';
+            var zipDir = './data/' + userId + '/photos_zip/';
+            var zipDir_ = 'data/' + userId + '/photos_zip/';
             if(!fs.existsSync(dstDir)){
                 fsHelper.mkdirsSync(dstDir);
             }
-            var sql = 'INSERT INTO photos (photoUrl, userId, title, intro) VALUE ?';
+            var sql = 'INSERT INTO photos (photoUrl,zipUrl , userId, title, intro, date) VALUE ?';
             var param=[];
-            // const date = new Date().
+            const date = new Date();
             for (var i = 0; i < list.length; i += 1) {
-                name =info.title +'_'+ Math.random().toString()+'\.'+list[i].split('\.')[1];
-                param.push([config.PRODUCTION.RESOURCE_URL+dstDir_+name, userId, info.title, info.intro]);
-                fs.rename(fromDir+list[i], dstDir+name, function(err){
+                const name = info.title +'_'+ Math.random().toString()+'\.'+list[i].split('\.')[1];
+                const zip_name = 'zip_'+name;
+                param.push([
+                    config.PRODUCTION.RESOURCE_URL+dstDir_+name,
+                    config.PRODUCTION.RESOURCE_URL+zipDir_+zip_name,
+                    userId,
+                    info.title,
+                    info.intro,
+                    date
+                ]);
+                const fromName = fromDir+list[i];
+                const dstName = dstDir+name;
+                fs.rename(fromName, dstDir + name, function(err){
                     if(err){
                         console.log(err);
                         callback(41);
                     }
+                    if(!fs.existsSync(dstDir+'zip/')){
+                        fsHelper.mkdirsSync(dstDir+'zip/');
+                    }
+                    images(dstName).size(300).save(dstDir + 'zip/' + name);
                 });
             }
             console.log(param);
@@ -79,6 +96,21 @@ exports.fetchPhotos = function(token, callback) {
                     callback(20, result);
                 }
             })
+        }
+    })
+};
+
+exports.getNewPhotos = function(callback) {
+    var sql = 'SELECT * FROM photos ORDER BY photoId DESC';
+    database.query(sql, function(err, result){
+        if(err){
+            console.log(err);
+            callback(41);
+        }else{
+            if(result.length > 20){
+                result = result.slice(0, 20);
+            }
+            callback(20, result);
         }
     })
 };

@@ -16,7 +16,9 @@ router.get('/photo/:photoId', function(req, res) {
     res.send('respond with a resource');
 });
 
-
+/**
+ * 根据req中cookie的token来获取该用户所上传的照片信息列表
+ */
 router.post('/fetchPhotos', function(req, res) {
     const token = req.cookies.token;
     photoService.fetchPhotos(token, function(message, result){
@@ -28,6 +30,9 @@ router.post('/fetchPhotos', function(req, res) {
         }
     });
 });
+/**
+ * 根据上传界面的结果, 将文件从temp中移动到用户file中
+ */
 router.post('/upload', function(req, res){
     photoService.upload(req.cookies.token, req.body.list, req.body.info, function(message){
         res.send({
@@ -36,6 +41,9 @@ router.post('/upload', function(req, res){
         res.end();
     });
 });
+/**
+ * 图片预先上传
+ */
 router.post('/preUpload', function(req, res){
     console.log(req.cookies.token);
     database.checkToken(req.cookies.token, function (err,result) {
@@ -62,5 +70,30 @@ router.post('/preUpload', function(req, res){
             });
         }
     });
+});
+
+/**
+ * 根据创建id获取最近的20张图片
+ */
+router.post('/getNewPhotos', function(req, res) {
+    photoService.getNewPhotos(function(message, result){
+        if (message !== 20) {
+            res.send({
+                message: message
+            });
+            res.end()
+        } else {
+            res.send({
+                message: message,
+                data: result
+            })
+        }
+    })
+});
+/**
+ * 根据图片的liked来获取最受欢迎的20张图片
+ */
+router.post('/getHotPhotos', function(req, res) {
+
 });
 module.exports = router;
