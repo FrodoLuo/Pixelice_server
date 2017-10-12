@@ -24,13 +24,11 @@ exports.upload = function (token, list, info, callback) {
             // const date = new Date().
             for (var i = 0; i < list.length; i += 1) {
                 name =info.title +'_'+ Math.random().toString()+'\.'+list[i].split('\.')[1];
+                param.push([config.PRODUCTION.RESOURCE_URL+dstDir_+name, userId, info.title, info.intro]);
                 fs.rename(fromDir+list[i], dstDir+name, function(err){
                     if(err){
                         console.log(err);
                         callback(41);
-                    }else{
-                        param.push([config.PRODUCTION.RESOURCE_URL+dstDir_+name, userId, info.title, info.intro]);
-                        console.log(param);
                     }
                 });
             }
