@@ -21,6 +21,7 @@ exports.upload = function (token, list, info, callback) {
             }
             var sql = 'INSERT INTO photos (photoUrl, userId, title, intro) VALUE ?';
             var param=[];
+            // const date = new Date().
             for (var i = 0; i < list.length; i += 1) {
                 name =info.title +'_'+ Math.random().toString()+'\.'+list[i].split('\.')[1];
                 fs.rename(fromDir+list[i], dstDir+name, function(err){
@@ -60,4 +61,26 @@ exports.preUpload = function(file, dir, callback) {
             })
         }
     });
+};
+
+exports.fetchPhotos = function(token, callback) {
+    database.checkToken(token, function(err, result){
+        if (err) {
+            console.log(err);
+            callback(41);
+        } else if (result.length === 0) {
+            callback(21);
+        } else {
+            var sql = 'SELECT * FROM photos WHERE userId = ?';
+            var param = [result[0].userId];
+            database.query(sql, param, function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback(41);
+                } else {
+                    callback(20, result);
+                }
+            })
+        }
+    })
 };

@@ -16,6 +16,18 @@ router.get('/photo/:photoId', function(req, res) {
     res.send('respond with a resource');
 });
 
+
+router.post('/fetchPhotos', function(req, res) {
+    const token = req.cookies.token;
+    photoService.fetchPhotos(token, function(message, result){
+        if(message === 20){
+            res.send({
+                message: message,
+                data: result
+            })
+        }
+    });
+});
 router.post('/upload', function(req, res){
     photoService.upload(req.cookies.token, req.body.list, req.body.info, function(message){
         res.send({
