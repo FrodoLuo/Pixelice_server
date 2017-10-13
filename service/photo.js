@@ -17,8 +17,8 @@ exports.upload = function (token, list, info, callback) {
             var fromDir = './public/temp/' + userId + '/files/';
             var dstDir = './data/' + userId + '/photos/';
             var dstDir_ = 'data/' + userId + '/photos/';
-            var zipDir = './data/' + userId + '/photos_zip/';
-            var zipDir_ = 'data/' + userId + '/photos_zip/';
+            var zipDir = './data/' + userId + '/photos/zip/';
+            var zipDir_ = 'data/' + userId + '/photos/zip/';
             if(!fs.existsSync(dstDir)){
                 fsHelper.mkdirsSync(dstDir);
             }
@@ -30,7 +30,7 @@ exports.upload = function (token, list, info, callback) {
                 const zip_name = 'zip_'+name;
                 param.push([
                     config.PRODUCTION.RESOURCE_URL+dstDir_+name,
-                    config.PRODUCTION.RESOURCE_URL+zipDir_+zip_name,
+                    config.PRODUCTION.RESOURCE_URL+zipDir_+name,
                     userId,
                     info.title,
                     info.intro,
