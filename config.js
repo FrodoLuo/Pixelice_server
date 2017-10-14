@@ -12,7 +12,7 @@ exports.CONNECTION_LOCALHOST = {
 exports.CONNECTION_SERVER = {
     host     : '120.24.225.58',
     user     : 'admin',
-    password : 'lyz19960920',
+    password : 'LuoyuzhoU1996',
     database : 'pixelice',
     dateStrings: true
 };

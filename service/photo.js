@@ -101,7 +101,11 @@ exports.fetchPhotos = function(token, callback) {
 };
 
 exports.getNewPhotos = function(callback) {
-    var sql = 'SELECT * FROM photos ORDER BY photoId DESC';
+    var sql = 'SELECT photos.*, users.nickName, users.avatarUrl ' +
+        'FROM photos ' +
+        'INNER JOIN users ' +
+        'ON photos.userId=users.userId ' +
+        'ORDER BY photoId DESC';
     database.query(sql, function(err, result){
         if(err){
             console.log(err);
