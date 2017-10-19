@@ -118,3 +118,17 @@ exports.getNewPhotos = function(callback) {
         }
     })
 };
+
+exports.randomPhoto = function(callback) {
+    var sql = 'SELECT photos.photoUrl, users.nickName as author FROM photos JOIN users ON photos.userId=users.userId';
+    database.query(sql, function(err, result) {
+        if(err){
+            console.log(err);
+            callback(45);
+        } else {
+            var index = Math.random()*result.length;
+            index = parseInt(index);
+            callback(20, result[index]);
+        }
+    })
+};

@@ -96,4 +96,19 @@ router.post('/getNewPhotos', function(req, res) {
 router.post('/getHotPhotos', function(req, res) {
 
 });
+/**
+ * 随机获取一张图片作为封面
+ */
+router.get('/randomPhoto', function(req, res) {
+    photoService.randomPhoto(function(message, result) {
+        if (message === 20) {
+            res.send({
+                message: 20,
+                result: result
+            });
+        } else {
+            res.send({message: 45});
+        }
+    })
+});
 module.exports = router;
