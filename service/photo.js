@@ -119,6 +119,25 @@ exports.getNewPhotos = function(callback) {
     })
 };
 
+exports.getHotPhotos = function(callback) {
+    var sql = 'SELECT photos.*, users.nickName, users.avatarUrl ' +
+        'FROM photos ' +
+        'INNER JOIN users ' +
+        'ON photos.userId=users.userId ' +
+        'ORDER BY photoId DESC';
+    database.query(sql, function(err, result){
+        if(err){
+            console.log(err);
+            callback(41);
+        }else{
+            if(result.length > 20){
+                result = result.slice(0, 20);
+            }
+            callback(20, result);
+        }
+    })
+};
+
 exports.randomPhoto = function(callback) {
     var sql = 'SELECT photos.photoUrl, users.nickName as author FROM photos JOIN users ON photos.userId=users.userId';
     database.query(sql, function(err, result) {
