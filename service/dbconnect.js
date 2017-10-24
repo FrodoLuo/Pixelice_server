@@ -1,16 +1,19 @@
-var mysql      = require('mysql');
+var mysql = require('mysql');
+var sqlite3 = require('sqlite3').verbose();
 
-var config = require('../config');
-
-var pool = mysql.createPool(config.CONNECTION_PRODUCTION);
+var sqlite3Connect = new sqlite3.Database('../database/pixelice.db');
+//
+// var config = require('../config');
+//
+// var pool = mysql.createPool(config.CONNECTION_SERVER);
 
 exports.query = function query(sql, param, callback) {
-    pool.query(sql, param, callback);
+    sqlite3Connect.all(sql, param, callback);
 };
 
 exports.checkToken = function (token, callback) {
     var sql = '' +
         'SELECT userId FROM login WHERE token=?';
     var param = [token];
-    pool.query(sql, param, callback);
+    sqlite3Connect.all(sql, param, callback);
 };
