@@ -1,7 +1,7 @@
 var mysql = require('mysql');
 var sqlite3 = require('sqlite3').verbose();
 
-var sqlite3Connect = new sqlite3.Database('../database/pixelice.db');
+var sqlite3Connect = new sqlite3.Database('./database/pixelice.db');
 //
 // var config = require('../config');
 //
