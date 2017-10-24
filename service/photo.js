@@ -145,9 +145,14 @@ exports.randomPhoto = function(callback) {
             console.log(err);
             callback(45);
         } else {
-            var index = Math.random()*result.length;
-            index = parseInt(index);
-            callback(20, result[index]);
+            var index = 0;
+            var re = [];
+            while(re.length < 5){
+                index = Math.random()*result.length;
+                index = parseInt(index);
+                re.push(result[index]);
+            }
+            callback(20, re);
         }
     })
 };
