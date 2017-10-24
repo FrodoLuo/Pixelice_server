@@ -26,7 +26,11 @@ exports.checkToken = function (token, callback) {
     var sql = '' +
         'SELECT userId FROM login WHERE token=?';
     var param = [token];
-    sqlite3Connect.all(sql, param, callback);
+    var sqlite3Connect = new sqlite3.Database('./database/pixelice.db');
+    sqlite3Connect.all(sql, param, function(err, result){
+        callback(err,result);
+        sqlite3Connect.close();
+    });
 };
 
 // var sql = 'SELECT photos.photoUrl, users.nickName as author FROM photos JOIN users ON photos.userId=users.userId';
