@@ -18,4 +18,13 @@ router.post('/userInfo', function(req, res) {
         }
     });
 });
+
+router.post('/modifyInfo', function(req, res) {
+    authService.modifyInfo(req.cookies.token, req.body.userInfo, function(message){
+        res.send({
+            message: message
+        })
+    })
+});
+
 module.exports = router;
