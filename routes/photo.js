@@ -134,10 +134,13 @@ router.get('/search', function(req, res) {
             res.send({
                 message: err.errno
             });
+            res.end();
+        } else{
+            res.send({
+                message: 20,
+                data: result
+            })
+            res.end();
         }
-        res.send({
-            message: 20,
-            data: result
-        })
     })
 })

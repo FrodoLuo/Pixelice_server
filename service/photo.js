@@ -161,11 +161,10 @@ exports.searchPhoto = function(keyString, callback) {
     var photolist = [];
     var queryList = "";
     var keywords = splitKeywords(keyString);
-    queryList = queryList + 'photos.title LIKE "%'+keywords[0]+'"';
+    queryList = queryList + 'photos.title LIKE "%'+keywords[0]+'%" ' + 'OR photos.intro LIKE "%'+keywords[0]+'%" ';
     for (var i = 1; i < keywords.length; i += 1) {
-        queryList = queryList + ' OR photo.title LIKE "%' + keywords[i]+'%"';
+        queryList = queryList + ' OR photo.title LIKE "%' + keywords[i]+'%" ' + 'OR photos.intro LIKE "%'+keywords[0]+'%" ';
     }
-    console.log(queryList);
     var sql = 
     'SELECT photos.*, users.nickName, users.avatarUrl ' +
     'FROM photos ' +
