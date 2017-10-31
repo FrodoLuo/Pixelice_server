@@ -124,3 +124,20 @@ router.get('/randomPhoto', function(req, res) {
     })
 });
 module.exports = router;
+/**
+ * 根据关键词获取图片
+ */
+router.get('/search', function(req, res) {
+    photoService.searchPhoto(req.query.keystring, function(err, result) {
+        if(err){
+            console.log(err);
+            res.send({
+                message: err.errno
+            });
+        }
+        res.send({
+            message: 20,
+            data: result
+        })
+    })
+})
