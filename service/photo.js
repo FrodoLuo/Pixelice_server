@@ -163,7 +163,7 @@ exports.searchPhoto = function(keyString, callback) {
     var keywords = splitKeywords(keyString);
     queryList = queryList + 'photos.title LIKE "%'+keywords[0]+'%" ' + 'OR photos.intro LIKE "%'+keywords[0]+'%" ';
     for (var i = 1; i < keywords.length; i += 1) {
-        queryList = queryList + ' OR photo.title LIKE "%' + keywords[i]+'%" ' + 'OR photos.intro LIKE "%'+keywords[0]+'%" ';
+        queryList = queryList + ' OR photos.title LIKE "%' + keywords[i]+'%" ' + 'OR photos.intro LIKE "%'+keywords[0]+'%" ';
     }
     var sql = 
     'SELECT photos.*, users.nickName, users.avatarUrl ' +
