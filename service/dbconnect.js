@@ -21,7 +21,24 @@ var query = function (sql, param, callback) {
 };
 
 exports.query = query;
-
+exports.insert = function(sql, param, callback) {
+    callback = callback||param;
+    var sqlite3Connect = new sqlite3.Database('./database/pixelice.db');
+    sqlite3Connect.run(sql, param, function(err){
+        callback(err,this);
+        sqlite3Connect.close();
+    });
+}
+exports.multiInsert = function(sql, params, callback) {
+    var sqlite3Connect = new sqlite3.Database('./database/pixelice.db');
+    sqlite3Connect.run('BEGIN TRANSACTION');
+    for(var i = 0; i < params.length; i += 1) {
+        sqlite3Connect.run(sql, params[i]);
+    }
+    sqlite3Connect.run('END TRANSACTION');
+    sqlite3Connect.close();
+    callback(null);
+}
 exports.checkToken = function (token, callback) {
     var sql = '' +
         'SELECT userId FROM login WHERE token=?';

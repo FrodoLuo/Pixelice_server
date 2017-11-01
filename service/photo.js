@@ -3,11 +3,9 @@ var fs = require('fs');
 var fsHelper = require('./file/fshelper');
 var config = require('../config');
 var images = require('images');
+require('./dateTimeHelper');
 
 exports.upload = function (token, list, info, callback) {
-    console.log(token);
-    console.log(list);
-    console.log(info);
     var name;
     database.checkToken(token, function(err, result) {
         if(result.length!==1){
@@ -22,9 +20,10 @@ exports.upload = function (token, list, info, callback) {
             if(!fs.existsSync(dstDir)){
                 fsHelper.mkdirsSync(dstDir);
             }
-            var sql = 'INSERT INTO photos (photoUrl,zipUrl , userId, title, intro, date) VALUE ?';
+            var sql = 'INSERT INTO photos (photoUrl,zipUrl,userId,title,intro,date) VALUES (?,?,?,?,?,?)';
             var param=[];
             const date = new Date();
+            
             for (var i = 0; i < list.length; i += 1) {
                 const name = info.title +'_'+ Math.random().toString()+'\.'+list[i].split('\.')[1];
                 const zip_name = 'zip_'+name;
@@ -34,7 +33,7 @@ exports.upload = function (token, list, info, callback) {
                     userId,
                     info.title,
                     info.intro,
-                    date
+                    date.format('yyyy-MM-dd hh:mm:ss')
                 ]);
                 const fromName = fromDir+list[i];
                 const dstName = dstDir+name;
@@ -46,11 +45,11 @@ exports.upload = function (token, list, info, callback) {
                     if(!fs.existsSync(dstDir+'zip/')){
                         fsHelper.mkdirsSync(dstDir+'zip/');
                     }
-                    images(dstName).size(300).save(dstDir + 'zip/' + name);
+                    images(dstName).size(400).save(dstDir + 'zip/' + name);
                 });
             }
             console.log(param);
-            database.query(sql, [param], function(err, result){
+            database.multiInsert(sql, param, function(err, result){
                 if(err){
                     console.log(err);
                     callback(41);
