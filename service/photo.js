@@ -155,3 +155,27 @@ exports.randomPhoto = function(callback) {
         }
     })
 };
+
+exports.searchPhoto = function(keyString, callback) {
+    var photolist = [];
+    var queryList = "";
+    var keywords = splitKeywords(keyString);
+    queryList = queryList + 'photos.title LIKE "%'+keywords[0]+'%" ' + 'OR photos.intro LIKE "%'+keywords[0]+'%" ';
+    for (var i = 1; i < keywords.length; i += 1) {
+        queryList = queryList + ' OR photo.title LIKE "%' + keywords[i]+'%" ' + 'OR photos.intro LIKE "%'+keywords[0]+'%" ';
+    }
+    var sql = 
+    'SELECT photos.*, users.nickName, users.avatarUrl ' +
+    'FROM photos ' +
+    'INNER JOIN users ' +
+    'ON photos.userId=users.userId ' +
+    'WHERE '+ queryList +
+    'ORDER BY photoId DESC';
+    database.query(sql, function(err, result) {
+        callback(err, result);
+    })
+}
+
+function splitKeywords(keyString) {
+    return keyString.split(' ');
+}
