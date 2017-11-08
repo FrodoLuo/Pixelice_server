@@ -138,7 +138,7 @@ exports.getHotPhotos = function(callback) {
 };
 
 exports.randomPhoto = function(callback) {
-    var sql = 'SELECT photos.photoUrl, users.nickName as author FROM photos JOIN users ON photos.userId=users.userId';
+    var sql = 'SELECT photos.*, users.nickName as author FROM photos JOIN users ON photos.userId=users.userId';
     database.query(sql, function(err, result) {
         if(err){
             console.log(err);
