@@ -27,4 +27,25 @@ router.post('/modifyInfo', function(req, res) {
     })
 });
 
+router.get('/hostInfo', function(req, res) {
+    authService.getHostInfo(req.query.hostId, function(err, result) {
+        if(err){
+            console.log(err);
+            res.send({
+                message: 21,
+                data: undefined
+            });
+        } else if(result.length === 0){
+            res.send({
+                messgae: 24,
+                data: undefined
+            });
+        } else {
+            res.send({
+                message: 20,
+                data: result[0]
+            })
+        }
+    });
+});
 module.exports = router;

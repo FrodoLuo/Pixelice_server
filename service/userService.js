@@ -28,3 +28,6 @@ exports.modifyInfo = function (token, vo, callback) {
         }
     })
 }
+exports.getHostInfo = function (hostId, callback) {
+    database.query("select userId, nickName, intro, gender, followers, avatarUrl from users where userId=?", [hostId], callback);
+}
