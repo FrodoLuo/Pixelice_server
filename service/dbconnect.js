@@ -35,9 +35,15 @@ exports.multiInsert = function(sql, params, callback) {
     for(var i = 0; i < params.length; i += 1) {
         sqlite3Connect.run(sql, params[i]);
     }
-    sqlite3Connect.run('END TRANSACTION');
+    sqlite3Connect.run('END TRANSACTION', function(err) {
+        if(err) {
+            console.log(err);
+            callback(21);
+        } else {
+            callback(20);
+        }
+    });
     sqlite3Connect.close();
-    callback(null);
 }
 exports.checkToken = function (token, callback) {
     var sql = '' +

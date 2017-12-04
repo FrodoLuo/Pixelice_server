@@ -123,7 +123,7 @@ router.get('/randomPhoto', function(req, res) {
         }
     })
 });
-module.exports = router;
+
 /**
  * 根据关键词获取图片
  */
@@ -144,3 +144,5 @@ router.get('/search', function(req, res) {
         }
     })
 })
+
+module.exports = router;
