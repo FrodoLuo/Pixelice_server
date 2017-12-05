@@ -17,15 +17,17 @@ exports.getAlbumContentById = function(token, albumId, callback) {
     if(result.length===0){
       result.push({userId: -1});
     }
-    database.query(`
-      select album_have.*, photos.*, users.nickName, users.avatarUrl
-      from album_have 
-      join photos
-      on photos.photoId=album_have.photoId
-      join users
-      on photos.userId=users.userId
-      where albumId=? and albumId in 
-        (select albumId from albums where private="f" or photos.userId=?)`, 
+    database.query(
+      `
+        select album_have.*, photos.*, users.nickName, users.avatarUrl
+        from album_have 
+        join photos
+        on photos.photoId=album_have.photoId
+        join users
+        on photos.userId=users.userId
+        where albumId=? and albumId in 
+          (select albumId from albums where private="f" or photos.userId=?)
+      `, 
       [albumId, result[0].userId],
       function(err, result){
         if(err) {
@@ -84,34 +86,110 @@ exports.createAlbum = function(album, token, callback) {
     }
   })
 }
-
-exports.addToAlbum = function(token, photoIds, albumId, callback) {
+exports.removeAlbum = function(albumId, token, callback) {
   database.checkToken(token, function(err, result) {
     if(result.length === 1) {
-      const params = [];
-      for(const photoId of photoIds) {
-        params.push([albumId, photoId, albumId, result[0].userId], photoId, result[0].userId);
-      }
-      database.multiInsert(
-        'insert into album_have(albumId, photoId) select ?,? where ? in (select albumId from albums where userId=?) and ? in (select photoId from photos where userId=?)',
-        params,
+      database.query(
+        `
+          update albums
+          set deleted='t'
+          where albumsId=? and userId=?
+        `,
+        [albumId, result[0].userId],
+        function(err, result) {
+          if(err) {
+            console.log(err);
+            callback(21);
+          } else {
+            callback(20, result);
+          }
+        }
+      );
+    } else {
+      callback(41);
+    }
+  })
+}
+exports.addToAlbum = function(token, photoId, albumId, callback) {
+  database.checkToken(token, function(err, result) {
+    if(result.length === 1) {
+      database.insert(
+        `
+          insert into album_have(albumId, photoId) 
+          select ?,? 
+          where ? in (select albumId from albums where userId=?) 
+            and ? in (select photoId from photos where userId=?)
+            and ? not in (select photoId from album_have where albumId=? and photoId=?)
+        `,
+        [albumId, photoId, albumId, result[0].userId, photoId, result[0].userId, photoId, albumId, photoId],
+        function(err, result) {
+          if(err) {
+            console.log(err);
+            callback(21);
+          } else {
+            callback(20);
+          }
+        }
+      )
+    }else {
+      callback(41);
+    }
+  })
+}
+exports.removeFromAlbum = function(token, photoId, albumId, callback) {
+  database.checkToken(token, function(err, result) {
+    if(result.length === 1) {
+      database.insert(
+        'delete from album_have where albumId=? and photoId=? and albumId in(select albumId from albums where userId=?)',
+        [albumId, photoId, result[0].userId],
         callback
+      )
+    } else {
+      callback(41);
+    }
+  })
+}
+exports.modifyAlbum = function(token, album, callback) {
+  console.log(album);
+  database.checkToken(token, function(err, result) {
+    if(result.length !== 1) {
+      callback(41);
+    } else {
+      database.query(
+        `
+          update albums
+          set albumName=?, description=?, private=?
+          where albumId=? and albumId in (
+            select albumId from albums where userId=?
+          )
+        `,
+        [
+          album.albumName,
+          album.description,
+          album.private,
+          album.albumId,
+          result[0].userId,
+        ],
+        function(err, result) {
+          if(err) {
+            console.log(err)
+            callback(21);
+          } else {
+            console.log(result);
+            callback(20, result);
+          }
+        }
       )
     }
   })
 }
-exports.removeFromAlbum = function(token, photoIds, albumId, callback) {
-  database.checkToken(token, function(err, result) {
-    if(result.length === 1) {
-      const params = [];
-      for(const photoId of photoIds) {
-        params.push([albumId, photoId, result[0].userId]);
-      }
-      database.multiInsert(
-        'delete from album_have where albumId=? and photoId=? and albumId in(select albumId from albums where userId=?)',
-        params,
-        callback
-      )
+exports.checkPhotoInAlbum = function(photoId, callback) {
+  database.query(`select albumId from album_have where photoId=?`, [photoId], function(err, result) {
+    if(err) {
+      console.log(err);
+      callback(21);
+    } else {
+      callback(20, result);
     }
   })
 }

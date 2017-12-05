@@ -63,4 +63,100 @@ router.get('/getAlbumsByUserId', function(req, res) {
     }
   })
 })
+router.post('/modifyAlbum', function(req, res) {
+  var token = req.cookies.token;
+  albumService.modifyAlbum(token, req.body.album, function(message, result) {
+    if(message === 20) {
+      res.send({
+        message,
+        data: result,
+      })
+    } else {
+      res.send({
+        message
+      })
+    }
+  })
+})
+router.post('/createAlbum', function(req, res) {
+  const token = req.cookies.token;
+  const album = req.body.album;
+  albumService.createAlbum(album, token, function(message, result) {
+    if(message === 20) {
+      res.send({
+        message,
+        data: result,
+      });
+    } else {
+      res.send({
+        message,
+      });
+    }
+  })
+})
+router.post('/removeAlbum', function(req, res) {
+  const token = req.cookies.token;
+  const album = req.body.album;
+  albumService.removeAlbum(album, token, function(message, result) {
+    if(message === 20) {
+      res.send({
+        message,
+        data: result,
+      });
+    } else {
+      res.send({
+        message,
+      });
+    }
+  })
+})
+router.post('/addToAlbum', function(req, res) {
+  const token = req.cookies.token;
+  const albumId = req.body.albumId;
+  const photoId = req.body.photoId;
+  albumService.addToAlbum(token, photoId, albumId, function(message, result) {
+    if(message === 20) {
+      res.send({
+        message,
+        data: result,
+      });
+    } else {
+      res.send({
+        message,
+      });
+    }
+  });
+})
+router.post('/removeFromAlbum', function(req, res) {
+  const token = req.cookies.token;
+  const albumId = req.body.albumId;
+  const photoId = req.body.photoId;
+  albumService.removeFromAlbum(token, photoId, albumId, function(message, result) {
+    if(message === 20) {
+      res.send({
+        message,
+        data: result,
+      });
+    } else {
+      res.send({
+        message,
+      });
+    }
+  });
+})
+router.post('/findInAlbum', function(req, res) {
+  const photoId = req.body.photoId;
+  albumService.checkPhotoInAlbum(photoId, function(message, result) {
+    if(message === 20) {
+      res.send({
+        message,
+        data: result,
+      });
+    } else {
+      res.send({
+        message,
+      })
+    }
+  })
+})
 module.exports = router;
