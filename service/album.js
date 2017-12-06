@@ -43,7 +43,7 @@ exports.getAlbumContentById = function(token, albumId, callback) {
 exports.getAlbumsByToken = function(token, callback) {
   database.checkToken(token, function(err, result) {
     if(result.length === 1) {
-      database.query('select albums.*, p.zipUrl from albums join photos p on albums.coverPhotoId=p.photoId where albums.userId=?', [result[0].userId], function(err, result) {
+      database.query('select albums.*, p.zipUrl, p.title from albums join photos p on albums.coverPhotoId=p.photoId where albums.userId=? and albums.deleted="f"', [result[0].userId], function(err, result) {
         if(err) {
           console.log(err);
           callback(21);
@@ -57,7 +57,7 @@ exports.getAlbumsByToken = function(token, callback) {
   })
 }
 exports.getAlbumsByUserId = function(userId, callback) {
-  database.query('select albums.*, p.zipUrl from albums join photos p on albums.coverPhotoId=p.photoId where albums.userId=?', [userId], function(err, result) {
+  database.query('select albums.*, p.zipUrl, p.title from albums join photos p on albums.coverPhotoId=p.photoId where albums.userId=? and albums.deleted="f"', [userId], function(err, result) {
     if(err) {
       console.log(err);
       callback(21);
@@ -70,8 +70,8 @@ exports.createAlbum = function(album, token, callback) {
   database.checkToken(token, function(err, result) {
     if(result.length === 1) {
       database.insert(
-        'insert into albums(userId, albumName, createDate, private) values(?,?,?,?)',
-        [result[0].userId, album.albumName, new Date().format('yyyy-MM-dd'), album.private],
+        'insert into albums(userId, albumName, createDate, private, description) values(?,?,?,?,?)',
+        [result[0].userId, album.albumName, new Date().format('yyyy-MM-dd'), album.private, album.description],
         function(err, result) {
           if(err) {
             console.log(err);
@@ -89,11 +89,11 @@ exports.createAlbum = function(album, token, callback) {
 exports.removeAlbum = function(albumId, token, callback) {
   database.checkToken(token, function(err, result) {
     if(result.length === 1) {
-      database.query(
+      database.insert(
         `
           update albums
           set deleted='t'
-          where albumsId=? and userId=?
+          where albumId=? and userId=?
         `,
         [albumId, result[0].userId],
         function(err, result) {
@@ -158,7 +158,7 @@ exports.modifyAlbum = function(token, album, callback) {
       database.query(
         `
           update albums
-          set albumName=?, description=?, private=?
+          set albumName=?, description=?, private=?, coverPhotoId=?
           where albumId=? and albumId in (
             select albumId from albums where userId=?
           )
@@ -167,6 +167,7 @@ exports.modifyAlbum = function(token, album, callback) {
           album.albumName,
           album.description,
           album.private,
+          album.coverId,
           album.albumId,
           result[0].userId,
         ],
@@ -192,4 +193,24 @@ exports.checkPhotoInAlbum = function(photoId, callback) {
       callback(20, result);
     }
   })
+}
+exports.quickFetchPhotoByAlbum = function(albumId, callback) {
+  database.query(
+    `
+      select ah.photoId, p.zipUrl, p.title
+      from album_have ah
+      join photos p
+      on ah.photoId=p.photoId
+      where ah.albumId=?
+    `,
+    [albumId],
+    function(err, result) {
+      if(err) {
+        console.log(err);
+        callback(21);
+      } else {
+        callback(20, result);
+      }
+    }
+  )
 }
