@@ -7,11 +7,10 @@ exports.likePhoto = function (token, photoId, callback) {
         `
           insert into like(userId, photoId)
           select ?,?
-          from like
           where ? not in (select photoId from like where userId=? and photoId=?)
         `,
         [result[0].userId, photoId, photoId, result[0].userId, photoId],
-        function (err) {
+        function (err, result) {
           if (err) {
             console.log(err);
             callback(21);
@@ -72,8 +71,9 @@ function updateLikes(photoId) {
     `
       update photos
       set liked=(select count(*) as liked from like where photoId=?)
+      where photoId=?
     `,
-    [photoId],
+    [photoId, photoId],
     function (err) {
       if (err) {
         console.log(err)

@@ -36,3 +36,4 @@ router.post('/checkLiked', function (req, res) {
     }
   })
 })
+module.exports = router;
