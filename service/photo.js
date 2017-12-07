@@ -138,18 +138,23 @@ exports.getHotPhotos = function(callback) {
 };
 
 exports.randomPhoto = function(callback) {
-    var sql = 'SELECT photos.*, users.nickName as author FROM photos JOIN users ON photos.userId=users.userId';
+    var sql = 'SELECT photos.*, users.nickName as author FROM photos JOIN users ON photos.userId=users.userId order by photos.photoId limit 10';
     database.query(sql, function(err, result) {
         if(err){
             console.log(err);
-            callback(45);
+            callback(21);
         } else {
+            var fetchedList = [0,0,0,0,0,0,0,0,0,0]
             var index = 0;
             var re = [];
             while(re.length < 5){
                 index = Math.random()*result.length;
                 index = parseInt(index);
-                re.push(result[index]);
+                if(fetchedList[index] === 1) {
+                    re.push(result[index]);
+                    fetchedList[index] = 1;
+                }
+                
             }
             callback(20, re);
         }

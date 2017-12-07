@@ -119,7 +119,7 @@ router.get('/randomPhoto', function(req, res) {
                 result: result
             });
         } else {
-            res.send({message: 45});
+            res.send({message});
         }
     })
 });
