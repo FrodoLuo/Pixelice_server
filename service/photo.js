@@ -149,7 +149,7 @@ exports.randomPhoto = function(callback) {
             while(re.length < 5){
                 index = Math.random()*result.length;
                 index = parseInt(index);
-                if(fetchedList[index] === 1) {
+                if(fetchedList[index] === 0) {
                     re.push(result[index]);
                     fetchedList[index] = 1;
                 }
