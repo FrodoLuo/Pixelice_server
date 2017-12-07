@@ -9,7 +9,7 @@ exports.upload = function (token, list, info, callback) {
     var name;
     database.checkToken(token, function(err, result) {
         if(result.length!==1){
-            callback(21);
+            callback(41);
         }else{
             var userId = result[0].userId;
             var fromDir = './public/temp/' + userId + '/files/';
@@ -39,8 +39,8 @@ exports.upload = function (token, list, info, callback) {
                 const dstName = dstDir+name;
                 fs.rename(fromName, dstDir + name, function(err){
                     if(err){
-                        console.log(err);
-                        callback(41);
+                        console.log("rename:" + err);
+                        callback(21);
                     }
                     if(!fs.existsSync(dstDir+'zip/')){
                         fsHelper.mkdirsSync(dstDir+'zip/');
@@ -49,12 +49,11 @@ exports.upload = function (token, list, info, callback) {
                 });
             }
             console.log(param);
-            database.multiInsert(sql, param, function(err, result){
-                if(err){
-                    console.log(err);
-                    callback(41);
+            database.multiInsert(sql, param, function(message, result){
+                if(message === 20){
+                    callback(20, result);
                 }else{
-                    callback(20);
+                    callback(21);
                 }
             });
         }

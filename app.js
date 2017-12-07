@@ -10,6 +10,7 @@ var user = require('./routes/user');
 var auth = require('./routes/auth');
 var photo = require('./routes/photo');
 var album = require('./routes/album');
+var social = require('./routes/social');
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use('/user', user);
 app.use('/auth', auth);
 app.use('/photo', photo);
 app.use('/album', album);
+app.use('/social', social);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
