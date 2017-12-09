@@ -93,7 +93,7 @@ router.post('/getNewPhotos', function(req, res) {
 /**
  * 根据图片的liked来获取最受欢迎的20张图片
  */
-router.post('/getHotPhotos', function(req, res) {
+router.get('/getHotPhotos', function(req, res) {
     photoService.getHotPhotos(function(message, result){
         if (message !== 20) {
             res.send({

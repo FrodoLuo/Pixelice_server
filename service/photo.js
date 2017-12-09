@@ -122,16 +122,25 @@ exports.getHotPhotos = function(callback) {
         'FROM photos ' +
         'INNER JOIN users ' +
         'ON photos.userId=users.userId ' +
-        'ORDER BY photoId DESC';
+        'ORDER BY liked DESC limit 15';
     database.query(sql, function(err, result){
         if(err){
             console.log(err);
             callback(41);
         }else{
-            if(result.length > 20){
-                result = result.slice(0, 20);
+            var fetchedList = {};
+            var index = 0;
+            var re = [];
+            while(re.length < 9){
+                index = Math.random()*result.length;
+                index = parseInt(index);
+                if(fetchedList[index] !== 1) {
+                    re.push(result[index]);
+                    fetchedList[index] = 1;
+                }
+                
             }
-            callback(20, result);
+            callback(20, re);
         }
     })
 };
