@@ -84,7 +84,7 @@ exports.fetchPhotos = function(token, callback) {
         } else if (result.length === 0) {
             callback(21);
         } else {
-            var sql = 'SELECT * FROM photos WHERE userId = ?';
+            var sql = 'SELECT * FROM photos WHERE userId = ? and deleted="f"';
             var param = [result[0].userId];
             database.query(sql, param, function (err, result) {
                 if (err) {
@@ -99,7 +99,7 @@ exports.fetchPhotos = function(token, callback) {
 };
 
 exports.fetchPhotosById = function(userId, callback) {
-    var sql = 'SELECT photos.*, users.nickName, users.avatarUrl, users.userId FROM photos JOIN users On photos.userId=users.userId WHERE photos.userId = ?';
+    var sql = 'SELECT photos.*, users.nickName, users.avatarUrl, users.userId FROM photos JOIN users On photos.userId=users.userId WHERE photos.userId = ? and deleted="f"';
     var param = [userId];
     database.query(sql, param, function (err, result) {
         if (err) {
@@ -116,6 +116,7 @@ exports.getNewPhotos = function(callback) {
         'FROM photos ' +
         'INNER JOIN users ' +
         'ON photos.userId=users.userId ' +
+        'where deleted="f" ' +
         'ORDER BY photoId DESC';
     database.query(sql, function(err, result){
         if(err){
@@ -135,6 +136,7 @@ exports.getHotPhotos = function(callback) {
         'FROM photos ' +
         'INNER JOIN users ' +
         'ON photos.userId=users.userId ' +
+        'where deleted="f" ' +
         'ORDER BY liked DESC limit 15';
     database.query(sql, function(err, result){
         if(err){
@@ -159,7 +161,7 @@ exports.getHotPhotos = function(callback) {
 };
 
 exports.randomPhoto = function(callback) {
-    var sql = 'SELECT photos.*, users.nickName, users.userId as author FROM photos JOIN users ON photos.userId=users.userId order by photos.photoId limit 10';
+    var sql = 'SELECT photos.*, users.nickName, users.userId as author FROM photos JOIN users ON photos.userId=users.userId where deleted="f" order by photos.photoId limit 10';
     database.query(sql, function(err, result) {
         if(err){
             console.log(err);
@@ -196,6 +198,7 @@ exports.searchPhoto = function(keyString, callback) {
     'INNER JOIN users ' +
     'ON photos.userId=users.userId ' +
     'WHERE '+ queryList +
+    'AND deleted="f" ' +
     'ORDER BY photoId DESC';
     database.query(sql, function(err, result) {
         callback(err, result);
