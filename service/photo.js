@@ -98,8 +98,21 @@ exports.fetchPhotos = function(token, callback) {
     })
 };
 
+exports.fetchPhotosById = function(userId, callback) {
+    var sql = 'SELECT photos.*, users.nickName, users.avatarUrl, users.userId FROM photos JOIN users On photos.userId=users.userId WHERE photos.userId = ?';
+    var param = [userId];
+    database.query(sql, param, function (err, result) {
+        if (err) {
+            console.log(err);
+            callback(21);
+        } else {
+            callback(20, result);
+        }
+    })
+};
+
 exports.getNewPhotos = function(callback) {
-    var sql = 'SELECT photos.*, users.nickName, users.avatarUrl ' +
+    var sql = 'SELECT photos.*, users.nickName, users.avatarUrl, users.userId ' +
         'FROM photos ' +
         'INNER JOIN users ' +
         'ON photos.userId=users.userId ' +
@@ -118,7 +131,7 @@ exports.getNewPhotos = function(callback) {
 };
 
 exports.getHotPhotos = function(callback) {
-    var sql = 'SELECT photos.*, users.nickName, users.avatarUrl ' +
+    var sql = 'SELECT photos.*, users.nickName, users.avatarUrl, users.userId ' +
         'FROM photos ' +
         'INNER JOIN users ' +
         'ON photos.userId=users.userId ' +
@@ -146,7 +159,7 @@ exports.getHotPhotos = function(callback) {
 };
 
 exports.randomPhoto = function(callback) {
-    var sql = 'SELECT photos.*, users.nickName as author FROM photos JOIN users ON photos.userId=users.userId order by photos.photoId limit 10';
+    var sql = 'SELECT photos.*, users.nickName, users.userId as author FROM photos JOIN users ON photos.userId=users.userId order by photos.photoId limit 10';
     database.query(sql, function(err, result) {
         if(err){
             console.log(err);
@@ -178,7 +191,7 @@ exports.searchPhoto = function(keyString, callback) {
         queryList = queryList + ' OR photos.title LIKE "%' + keywords[i]+'%" ' + 'OR photos.intro LIKE "%'+keywords[0]+'%" ';
     }
     var sql = 
-    'SELECT photos.*, users.nickName, users.avatarUrl ' +
+    'SELECT photos.*, users.nickName, users.avatarUrl, users.userId ' +
     'FROM photos ' +
     'INNER JOIN users ' +
     'ON photos.userId=users.userId ' +
