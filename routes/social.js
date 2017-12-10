@@ -24,7 +24,7 @@ router.post('/dislike', function (req, res) {
 router.post('/checkLiked', function (req, res) {
   const token = req.cookies.token;
   socialService.checkLiked(token, function (message, result) {
-    if(message === 20) {
+    if (message === 20) {
       res.send({
         message,
         data: result,
@@ -35,5 +35,37 @@ router.post('/checkLiked', function (req, res) {
       });
     }
   })
+})
+router.post('/follow', function (req, res) {
+  const token = req.cookies.token;
+  const followedId = req.body.followedId;
+  socialService.follow(token, followedId, function (message, result) {
+    res.send({ message, data: result });
+  })
+})
+
+router.post('/unfollow', function (req, res) {
+  const token = req.cookies.token;
+  const followedId = req.body.followedId;
+  socialService.unfollow(token, followedId, function (message, result) {
+    res.send({ message, data: result });
+  })
+})
+
+router.post('/sendMessage', function (req, res) {
+  const token = req.cookies.token;
+  const receiverId = req.body.receiverId;
+  const content = req.body.content;
+})
+
+router.post('/fetchMessages', function (req, res) {
+  const token = req.cookies.token;
+
+})
+
+router.post('/messageDetail', function (req, res) {
+  const token = req.cookies.token;
+  const messageId = req.body.messageId;
+  
 })
 module.exports = router;

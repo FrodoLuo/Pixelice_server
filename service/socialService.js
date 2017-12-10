@@ -81,3 +81,102 @@ function updateLikes(photoId) {
     }
   )
 }
+
+exports.follow = function (token, followedId, callback) {
+  database.checkToken(token, function (err, result) {
+    if (err) {
+      console.log(err);
+      callback(21);
+    } else if (result.length === 1) {
+      const userId = result[0].userId;
+      database.insert(
+        `
+        insert into follow(userId, followedId, createTime)
+        select ?,?,?
+        where ? not in (select userId from follow where userId=? and followedId=?)
+        `,
+        [userId, followedId, new Date().format('yyyy-MM-dd'), userId, userId, followedId],
+        function (err, result) {
+          if(err) {
+            console.log(err);
+            callback(21);
+          } else {
+            callback(20, result);
+          }
+        }
+      )
+    } else {
+      callback(41);
+    }
+  })
+}
+exports.unfollow = function (token, followedId, callback) {
+  database.checkToken(token, function (err, result) {
+    if (err) {
+      console.log(err);
+      callback(21);
+    } else if (result.length === 1) {
+      const userId = result[0].userId;
+      database.insert(
+        `
+        delete from follow
+        where userId=? and followedId=?
+        `,
+        [userId, followedId],
+        function (err, result) {
+          if(err) {
+            console.log(err);
+            callback(21);
+          } else {
+            callback(20, result);
+          }
+        }
+      )
+    } else {
+      callback(41);
+    }
+  })
+}
+function updateFollows(userId) {
+  database.insert(
+    `
+    update users
+    set followers=(
+      select count(*) as followers from follow where userId=?
+    )
+    where userId=?
+    `,
+    [userId, userId],
+    function(err) {
+      if(err){
+        console.log(err);
+      }
+    }
+  );
+}
+exports.sendMessage = function(token, receiverId, content, callback) {
+  database.checkToken(token, function(err, result) {
+    if(err) {
+      console.log(err);
+      callback(21);
+    } else if (result.length === 1) {
+      database.insert(
+        `
+        insert into message(userId, content, createTime, fromId)
+        values(?,?,?,?)
+        `,
+        [receiverId, content, new Date().format('yyyy-MM-dd hh:mm:ss'), result[0].userId],
+        function(err, result) {
+          if(err) {
+            console.log(err);
+            callback(21);
+          } else {
+            callback(20, result);
+          }
+        }
+      )
+    } else {
+      callback(41);
+    }
+  })
+}
