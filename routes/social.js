@@ -56,16 +56,32 @@ router.post('/sendMessage', function (req, res) {
   const token = req.cookies.token;
   const receiverId = req.body.receiverId;
   const content = req.body.content;
+  socialService.sendMessage(token, receiverId, content, function (message, result) {
+    res.send({
+      message,
+      data: result,
+    });
+  })
 })
 
 router.post('/fetchMessages', function (req, res) {
   const token = req.cookies.token;
-
+  socialService.fetchMessages(token, function (message, result) {
+    res.send({
+      message,
+      data: result,
+    })
+  })
 })
 
 router.post('/messageDetail', function (req, res) {
   const token = req.cookies.token;
   const messageId = req.body.messageId;
-  
+  socialService.getMessageDetail(token, messageId, function (message, result) {
+    res.send({
+      message,
+      data: result,
+    })
+  })
 })
 module.exports = router;

@@ -97,11 +97,12 @@ exports.follow = function (token, followedId, callback) {
         `,
         [userId, followedId, new Date().format('yyyy-MM-dd'), userId, userId, followedId],
         function (err, result) {
-          if(err) {
+          if (err) {
             console.log(err);
             callback(21);
           } else {
             callback(20, result);
+            updateFollows(followedId);
           }
         }
       )
@@ -124,11 +125,12 @@ exports.unfollow = function (token, followedId, callback) {
         `,
         [userId, followedId],
         function (err, result) {
-          if(err) {
+          if (err) {
             console.log(err);
             callback(21);
           } else {
             callback(20, result);
+            updateFollows(followedId);
           }
         }
       )
@@ -147,16 +149,16 @@ function updateFollows(userId) {
     where userId=?
     `,
     [userId, userId],
-    function(err) {
-      if(err){
+    function (err) {
+      if (err) {
         console.log(err);
       }
     }
   );
 }
-exports.sendMessage = function(token, receiverId, content, callback) {
-  database.checkToken(token, function(err, result) {
-    if(err) {
+exports.sendMessage = function (token, receiverId, content, callback) {
+  database.checkToken(token, function (err, result) {
+    if (err) {
       console.log(err);
       callback(21);
     } else if (result.length === 1) {
@@ -166,7 +168,59 @@ exports.sendMessage = function(token, receiverId, content, callback) {
         values(?,?,?,?)
         `,
         [receiverId, content, new Date().format('yyyy-MM-dd hh:mm:ss'), result[0].userId],
-        function(err, result) {
+        function (err, result) {
+          if (err) {
+            console.log(err);
+            callback(21);
+          } else {
+            callback(20, result);
+          }
+        }
+      )
+    } else {
+      callback(41);
+    }
+  })
+}
+exports.fetchMessages = function (token, callback) {
+  database.checkToken(token, function (err, result) {
+    if (err) {
+      console.log(err);
+      callback(21);
+    } else if (result.length === 1) {
+      database.query(
+        `
+          select m.*, u.nickName, u.avatarUrl 
+          from message m
+          join users u
+          on m.fromId=u.userId
+          where userId=?
+        `,
+        [result[0].userId],
+        function (err, result) {
+          if (err) {
+            console.log(err);
+            callback(21);
+          } else {
+            callback(20, result);
+          }
+        }
+      );
+    } else {
+      callback(41);
+    }
+  })
+}
+exports.getMessageDetail = function (token, messageId, callback) {
+  database.checkToken(token, function (err, result) {
+    if (err) {
+      console.log(err);
+      callback(21);
+    } else if (result.length === 1) {
+      database.query(
+        `select * from message where messageId=? and userId=?`,
+        [messageId, result[0].userId],
+        function (err, result) {
           if(err) {
             console.log(err);
             callback(21);
