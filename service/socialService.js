@@ -211,6 +211,35 @@ exports.fetchMessages = function (token, callback) {
     }
   })
 }
+exports.fetchSentMessages = function (token, callback) {
+  database.checkToken(token, function (err, result) {
+    if (err) {
+      console.log(err);
+      callback(21);
+    } else if (result.length === 1) {
+      database.query(
+        `
+          select m.*, u.nickName, u.avatarUrl 
+          from message m
+          join users u
+          on m.userId=u.userId
+          where m.fromId=?
+        `,
+        [result[0].userId],
+        function (err, result) {
+          if (err) {
+            console.log(err);
+            callback(21);
+          } else {
+            callback(20, result);
+          }
+        }
+      );
+    } else {
+      callback(41);
+    }
+  })
+}
 exports.getMessageDetail = function (token, messageId, callback) {
   database.checkToken(token, function (err, result) {
     if (err) {
@@ -225,17 +254,56 @@ exports.getMessageDetail = function (token, messageId, callback) {
           where userId=? and messageId=?
         `,
         [result[0].userId, parseInt(messageId)],
-        function(err, result){
-          if(err){
+        function (err, result) {
+          if (err) {
             console.log(err)
             callback(21);
-          } else{
+          } else {
             callback(20, result);
           }
         }
       )
     } else {
       callback(41);
+    }
+  })
+}
+exports.fetchUnreadCount = function (token, callback) {
+  database.checkToken(token, function (err, result) {
+    if (err) {
+      console.log(err);
+      callback(21);
+    } else if (result.length === 1) {
+      database.query('select count(*) as unread from message where read="f" and userId=?', [result[0].userId], function (err, result) {
+        if (err) {
+          console.log(err);
+          callback(21);
+        } else {
+          callback(20, result[0].unread || 0);
+        }
+      })
+    }
+  })
+}
+
+exports.getFollowedUser = function (token, callback) {
+  database.checkToken(token, function (err, result) {
+    if (err) {
+      console.log(err);
+      callback(21);
+    } else if (result.length === 1) {
+      database.query(
+        `select * from users where userId in (select followedId from follw where userId=?)`,
+        [result[0].userId],
+        function (err, result) {
+          if (err) {
+            console.log(err);
+            callback(21);
+          } else {
+            callback(20, result);
+          }
+        }
+      )
     }
   })
 }

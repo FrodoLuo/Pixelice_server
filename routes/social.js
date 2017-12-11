@@ -73,11 +73,38 @@ router.post('/fetchMessages', function (req, res) {
     })
   })
 })
-
+router.post('/fetchSentMessages', function (req, res) {
+  const token = req.cookies.token;
+  socialService.fetchSentMessages(token, function (message, result) {
+    res.send({
+      message,
+      data: result,
+    })
+  })
+})
 router.post('/messageDetail', function (req, res) {
   const token = req.cookies.token;
   const messageId = req.body.messageId;
   socialService.getMessageDetail(token, messageId, function (message, result) {
+    res.send({
+      message,
+      data: result,
+    })
+  })
+})
+router.post('/countUnread', function (req, res) {
+  const token = req.cookies.token;
+  socialService.fetchUnreadCount(token, function (message, result) {
+    res.send({
+      message,
+      data: result
+    })
+  })
+})
+
+router.post('/getFollowedUsers', function (req, res) {
+  const token = req.cookies.token;
+  socialService.getFollowedUser(token, function (message, result) {
     res.send({
       message,
       data: result,

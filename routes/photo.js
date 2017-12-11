@@ -160,4 +160,13 @@ router.get('/search', function (req, res) {
     })
 })
 
+router.post('/getLikedPhotos', function (req, res) {
+    const token = req.cookies.token;
+    photoService.getLikedPhotos(token, function (message, result) {
+        res.send({
+            message,
+            data: result,
+        })
+    })
+})
 module.exports = router;

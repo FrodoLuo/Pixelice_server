@@ -1,7 +1,7 @@
 var database = require('./dbconnect');
-exports.getAlbumInfoById = function(albumId, callback) {
-  database.query(`select * from albums join photos on albums.coverPhotoId=photos.photoId where albumId=?`, [albumId], function(err, result) {
-    if(err) {
+exports.getAlbumInfoById = function (albumId, callback) {
+  database.query(`select * from albums join photos on albums.coverPhotoId=photos.photoId where albumId=?`, [albumId], function (err, result) {
+    if (err) {
       console.log(err);
       callback(21);
     } else {
@@ -9,13 +9,13 @@ exports.getAlbumInfoById = function(albumId, callback) {
     }
   });
 }
-exports.getAlbumContentById = function(token, albumId, callback) {
-  database.checkToken(token, function(err, result) {
-    if(err) {
+exports.getAlbumContentById = function (token, albumId, callback) {
+  database.checkToken(token, function (err, result) {
+    if (err) {
       console.log(err)
     }
-    if(result.length===0){
-      result.push({userId: -1});
+    if (result.length === 0) {
+      result.push({ userId: -1 });
     }
     database.query(
       `
@@ -27,24 +27,24 @@ exports.getAlbumContentById = function(token, albumId, callback) {
         on photos.userId=users.userId
         where albumId=? and albumId in 
           (select albumId from albums where private="f" or photos.userId=?)
-      `, 
+      `,
       [albumId, result[0].userId],
-      function(err, result){
-        if(err) {
+      function (err, result) {
+        if (err) {
           console.log(err);
           callback(21);
-        } else  {
+        } else {
           callback(20, result);
-        } 
+        }
       }
     );
   })
 }
-exports.getAlbumsByToken = function(token, callback) {
-  database.checkToken(token, function(err, result) {
-    if(result.length === 1) {
-      database.query('select albums.*, p.zipUrl, p.title from albums join photos p on albums.coverPhotoId=p.photoId where albums.userId=? and albums.deleted="f"', [result[0].userId], function(err, result) {
-        if(err) {
+exports.getAlbumsByToken = function (token, callback) {
+  database.checkToken(token, function (err, result) {
+    if (result.length === 1) {
+      database.query('select albums.*, p.zipUrl, p.title from albums join photos p on albums.coverPhotoId=p.photoId where albums.userId=? and albums.deleted="f"', [result[0].userId], function (err, result) {
+        if (err) {
           console.log(err);
           callback(21);
         } else {
@@ -56,9 +56,9 @@ exports.getAlbumsByToken = function(token, callback) {
     }
   })
 }
-exports.getAlbumsByUserId = function(userId, callback) {
-  database.query('select albums.*, p.zipUrl, p.title from albums join photos p on albums.coverPhotoId=p.photoId where albums.userId=? and albums.deleted="f"', [userId], function(err, result) {
-    if(err) {
+exports.getAlbumsByUserId = function (userId, callback) {
+  database.query('select albums.*, p.zipUrl, p.title from albums join photos p on albums.coverPhotoId=p.photoId where albums.userId=? and albums.deleted="f"', [userId], function (err, result) {
+    if (err) {
       console.log(err);
       callback(21);
     } else {
@@ -66,14 +66,14 @@ exports.getAlbumsByUserId = function(userId, callback) {
     }
   })
 }
-exports.createAlbum = function(album, token, callback) {
-  database.checkToken(token, function(err, result) {
-    if(result.length === 1) {
+exports.createAlbum = function (album, token, callback) {
+  database.checkToken(token, function (err, result) {
+    if (result.length === 1) {
       database.insert(
         'insert into albums(userId, albumName, createDate, private, description) values(?,?,?,?,?)',
         [result[0].userId, album.albumName, new Date().format('yyyy-MM-dd'), album.private, album.description],
-        function(err, result) {
-          if(err) {
+        function (err, result) {
+          if (err) {
             console.log(err);
             callback(21);
           } else {
@@ -86,9 +86,9 @@ exports.createAlbum = function(album, token, callback) {
     }
   })
 }
-exports.removeAlbum = function(albumId, token, callback) {
-  database.checkToken(token, function(err, result) {
-    if(result.length === 1) {
+exports.removeAlbum = function (albumId, token, callback) {
+  database.checkToken(token, function (err, result) {
+    if (result.length === 1) {
       database.insert(
         `
           update albums
@@ -96,8 +96,8 @@ exports.removeAlbum = function(albumId, token, callback) {
           where albumId=? and userId=?
         `,
         [albumId, result[0].userId],
-        function(err, result) {
-          if(err) {
+        function (err, result) {
+          if (err) {
             console.log(err);
             callback(21);
           } else {
@@ -110,9 +110,9 @@ exports.removeAlbum = function(albumId, token, callback) {
     }
   })
 }
-exports.addToAlbum = function(token, photoId, albumId, callback) {
-  database.checkToken(token, function(err, result) {
-    if(result.length === 1) {
+exports.addToAlbum = function (token, photoId, albumId, callback) {
+  database.checkToken(token, function (err, result) {
+    if (result.length === 1) {
       database.insert(
         `
           insert into album_have(albumId, photoId) 
@@ -122,8 +122,8 @@ exports.addToAlbum = function(token, photoId, albumId, callback) {
             and ? not in (select photoId from album_have where albumId=? and photoId=?)
         `,
         [albumId, photoId, albumId, result[0].userId, photoId, result[0].userId, photoId, albumId, photoId],
-        function(err, result) {
-          if(err) {
+        function (err, result) {
+          if (err) {
             console.log(err);
             callback(21);
           } else {
@@ -131,14 +131,14 @@ exports.addToAlbum = function(token, photoId, albumId, callback) {
           }
         }
       )
-    }else {
+    } else {
       callback(41);
     }
   })
 }
-exports.removeFromAlbum = function(token, photoId, albumId, callback) {
-  database.checkToken(token, function(err, result) {
-    if(result.length === 1) {
+exports.removeFromAlbum = function (token, photoId, albumId, callback) {
+  database.checkToken(token, function (err, result) {
+    if (result.length === 1) {
       database.insert(
         'delete from album_have where albumId=? and photoId=? and albumId in(select albumId from albums where userId=?)',
         [albumId, photoId, result[0].userId],
@@ -149,10 +149,10 @@ exports.removeFromAlbum = function(token, photoId, albumId, callback) {
     }
   })
 }
-exports.modifyAlbum = function(token, album, callback) {
+exports.modifyAlbum = function (token, album, callback) {
   console.log(album);
-  database.checkToken(token, function(err, result) {
-    if(result.length !== 1) {
+  database.checkToken(token, function (err, result) {
+    if (result.length !== 1) {
       callback(41);
     } else {
       database.query(
@@ -171,8 +171,8 @@ exports.modifyAlbum = function(token, album, callback) {
           album.albumId,
           result[0].userId,
         ],
-        function(err, result) {
-          if(err) {
+        function (err, result) {
+          if (err) {
             console.log(err)
             callback(21);
           } else {
@@ -184,9 +184,9 @@ exports.modifyAlbum = function(token, album, callback) {
     }
   })
 }
-exports.checkPhotoInAlbum = function(photoId, callback) {
-  database.query(`select albumId from album_have where photoId=?`, [photoId], function(err, result) {
-    if(err) {
+exports.checkPhotoInAlbum = function (photoId, callback) {
+  database.query(`select albumId from album_have where photoId=?`, [photoId], function (err, result) {
+    if (err) {
       console.log(err);
       callback(21);
     } else {
@@ -194,7 +194,7 @@ exports.checkPhotoInAlbum = function(photoId, callback) {
     }
   })
 }
-exports.quickFetchPhotoByAlbum = function(albumId, callback) {
+exports.quickFetchPhotoByAlbum = function (albumId, callback) {
   database.query(
     `
       select ah.photoId, p.zipUrl, p.title
@@ -204,8 +204,8 @@ exports.quickFetchPhotoByAlbum = function(albumId, callback) {
       where ah.albumId=?
     `,
     [albumId],
-    function(err, result) {
-      if(err) {
+    function (err, result) {
+      if (err) {
         console.log(err);
         callback(21);
       } else {
