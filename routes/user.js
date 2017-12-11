@@ -3,14 +3,14 @@ var router = express.Router();
 var authService = require('../service/userService');
 
 /* GET users listing. */
-router.post('/userInfo', function(req, res) {
-    authService.getUserInfo(req.cookies.token, function(err, result) {
-        if ( err || result.length === 0 ) {
+router.post('/userInfo', function (req, res) {
+    authService.getUserInfo(req.cookies.token, function (err, result) {
+        if (err || result.length === 0) {
             console.log(err);
             res.send({
                 message: 21
             });
-        } else  {
+        } else {
             res.send({
                 message: 20,
                 data: result[0]
@@ -19,31 +19,25 @@ router.post('/userInfo', function(req, res) {
     });
 });
 
-router.post('/modifyInfo', function(req, res) {
-    authService.modifyInfo(req.cookies.token, req.body.userInfo, function(message){
+router.post('/modifyInfo', function (req, res) {
+    authService.modifyInfo(req.cookies.token, req.body.userInfo, function (message) {
         res.send({
             message: message
         })
     })
 });
 
-router.get('/hostInfo', function(req, res) {
-    authService.getHostInfo(req.query.hostId, function(err, result) {
-        if(err){
-            console.log(err);
+router.get('/hostInfo', function (req, res) {
+    var token = req.cookies.token
+    authService.getHostInfo(token, req.query.hostId, function (message, result) {
+        if(message === 20){
             res.send({
-                message: 21,
-                data: undefined
-            });
-        } else if(result.length === 0){
-            res.send({
-                messgae: 24,
-                data: undefined
-            });
+                message,
+                data: result[0]
+            })
         } else {
             res.send({
-                message: 20,
-                data: result[0]
+                message,
             })
         }
     });

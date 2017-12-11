@@ -194,7 +194,7 @@ exports.fetchMessages = function (token, callback) {
           from message m
           join users u
           on m.fromId=u.userId
-          where userId=?
+          where m.userId=?
         `,
         [result[0].userId],
         function (err, result) {
@@ -217,14 +217,19 @@ exports.getMessageDetail = function (token, messageId, callback) {
       console.log(err);
       callback(21);
     } else if (result.length === 1) {
-      database.query(
-        `select * from message where messageId=? and userId=?`,
-        [messageId, result[0].userId],
-        function (err, result) {
-          if(err) {
-            console.log(err);
+      // console.log([result[0].userId, parseInt(messageId)]);
+      database.insert(
+        `
+          update message
+          set read="t"
+          where userId=? and messageId=?
+        `,
+        [result[0].userId, parseInt(messageId)],
+        function(err, result){
+          if(err){
+            console.log(err)
             callback(21);
-          } else {
+          } else{
             callback(20, result);
           }
         }
