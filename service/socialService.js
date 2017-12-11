@@ -144,7 +144,7 @@ function updateFollows(userId) {
     `
     update users
     set followers=(
-      select count(*) as followers from follow where userId=?
+      select count(*) as followers from follow where followedId=?
     )
     where userId=?
     `,
