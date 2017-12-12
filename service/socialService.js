@@ -89,6 +89,7 @@ exports.follow = function (token, followedId, callback) {
       callback(21);
     } else if (result.length === 1) {
       const userId = result[0].userId;
+      const nickName = result[0].nickName;
       database.insert(
         `
         insert into follow(userId, followedId, createTime)
@@ -103,6 +104,7 @@ exports.follow = function (token, followedId, callback) {
           } else {
             callback(20, result);
             updateFollows(followedId);
+            broadCast([followedId], `${nickName}关注了你`);
           }
         }
       )
@@ -195,6 +197,7 @@ exports.fetchMessages = function (token, callback) {
           join users u
           on m.fromId=u.userId
           where m.userId=?
+          order by m.read, m.messageId desc
         `,
         [result[0].userId],
         function (err, result) {
@@ -307,3 +310,38 @@ exports.getFollowedUser = function (token, callback) {
     }
   })
 }
+
+exports.broadToFollowers = function(userId, content) {
+  database.query('select userId from follow where followedId=?', [userId], function(err, result) {
+    if(err){
+      console.log(err);
+    } else {
+      const toIds = [];
+      for(const item of result) {
+        toIds.push(item.userId);
+      }
+      broadCast(toIds, content);
+    }
+  })
+}
+
+broadCast = function (toIds, content) {
+  const params = [];
+  const createTime = new Date().format('yyyy-MM-dd hh:mm:ss');
+  for (const id of toIds) {
+    params.push([id, content, createTime, 1])
+  }
+  database.multiInsert(
+    `
+    insert into message(userId, content, createTime, fromId)
+    values(?,?,?,?)
+    `,
+    params,
+    function (err, result) {
+      if(err){
+        console.log(err);
+      }
+    }
+  )
+}
+exports.broadCast = broadCast;

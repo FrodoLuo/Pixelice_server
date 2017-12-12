@@ -3,6 +3,7 @@ var fs = require('fs');
 var fsHelper = require('./file/fshelper');
 var config = require('../config');
 var images = require('images');
+var socialService = require('./socialService');
 require('./dateTimeHelper');
 
 exports.upload = function (token, list, info, callback) {
@@ -12,6 +13,7 @@ exports.upload = function (token, list, info, callback) {
             callback(41);
         } else {
             var userId = result[0].userId;
+            var nickName = result[0].nickName;
             var fromDir = './public/temp/' + userId + '/files/';
             var dstDir = './data/' + userId + '/photos/';
             var dstDir_ = 'data/' + userId + '/photos/';
@@ -52,6 +54,7 @@ exports.upload = function (token, list, info, callback) {
             database.multiInsert(sql, param, function (message, result) {
                 if (message === 20) {
                     callback(20, result);
+                    socialService.broadToFollowers(userId, `您关注的${nickName}上传了${param.length}张新照片`)
                 } else {
                     callback(21);
                 }

@@ -47,7 +47,7 @@ exports.multiInsert = function(sql, params, callback) {
 }
 exports.checkToken = function (token, callback) {
     var sql = '' +
-        'SELECT userId FROM login WHERE token=?';
+        'SELECT l.userId, u.nickName FROM login l join users u on l.userId=u.userId WHERE token=?';
     var param = [token];
     var sqlite3Connect = new sqlite3.Database('./database/pixelice.db');
     sqlite3Connect.all(sql, param, function(err, result){
