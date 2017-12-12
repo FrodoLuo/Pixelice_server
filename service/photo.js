@@ -220,7 +220,7 @@ exports.getLikedPhotos = function (token, callback) {
             callback(21);
         } else if (result.length === 1) {
             database.query(
-                `select p.*, u.nickName, u.avatarUrl from photos p join users u on p.userId=u.userId  where p.deleted="f" p.userId=? and photoId in (select photoId from like where userId=?)`,
+                `select p.*, u.nickName, u.avatarUrl from photos p join users u on p.userId=u.userId  where p.deleted="f" and p.userId=? and photoId in (select photoId from like where userId=?)`,
                 [result[0].userId, result[0].userId],
                 function (err, result) {
                     if (err) {
