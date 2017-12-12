@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.post('/users', function(req, res) {
   databse.checkToken(req.cookies.token, function(err, result) {
-    if(!result[0].userId === 1) {
+    if(result[0].userId !== 1) {
       res.sendStatus(503);
     } else {
       databse.query('select * from users', function(err, result) {
