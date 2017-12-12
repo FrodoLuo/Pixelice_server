@@ -22,7 +22,7 @@ exports.upload = function (token, list, info, callback) {
             if (!fs.existsSync(dstDir)) {
                 fsHelper.mkdirsSync(dstDir);
             }
-            var sql = 'INSERT INTO photos (photoUrl,zipUrl,userId,title,intro,date) VALUES (?,?,?,?,?,?)';
+            var sql = 'INSERT INTO photos (photoUrl,zipUrl,userId,title,intro,date,tags) VALUES (?,?,?,?,?,?,?)';
             var param = [];
             const date = new Date();
 
@@ -35,7 +35,8 @@ exports.upload = function (token, list, info, callback) {
                     userId,
                     info.title,
                     info.intro,
-                    date.format('yyyy-MM-dd hh:mm:ss')
+                    date.format('yyyy-MM-dd hh:mm:ss'),
+                    info.tags
                 ]);
                 const fromName = fromDir + list[i];
                 const dstName = dstDir + name;
@@ -193,7 +194,7 @@ exports.searchPhoto = function (keyString, callback) {
     var keywords = splitKeywords(keyString);
     queryList = queryList + 'photos.title LIKE "%' + keywords[0] + '%" ' + 'OR photos.intro LIKE "%' + keywords[0] + '%" ';
     for (var i = 1; i < keywords.length; i += 1) {
-        queryList = queryList + ' OR photos.title LIKE "%' + keywords[i] + '%" ' + 'OR photos.intro LIKE "%' + keywords[0] + '%" ';
+        queryList = queryList + ' OR photos.title LIKE "%' + keywords[i] + '%" ' + 'OR photos.intro LIKE "%' + keywords[0] + '%" ' + 'OR photos.tags LIKE "%' + keywords[0] + '%" ';
     }
     var sql =
         'SELECT photos.*, users.nickName, users.avatarUrl, users.userId ' +
