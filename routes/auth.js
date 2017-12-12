@@ -32,10 +32,12 @@ router.post('/signUp', function(req, res) {
     authService.signUp(data, function (err, result, token) {
         if(err) {
             console.log(err);
-            switch (err.code) {
-                case 'ER_DUP_ENTRY':
+            switch (err.errno) {
+                case '19':
                     res.send({message: 21});
                     break;
+                default:
+                    res.send({message: 21});
             }
         } else {
             console.log(result);
