@@ -30,7 +30,7 @@ router.post('/modifyInfo', function (req, res) {
 router.get('/hostInfo', function (req, res) {
     var token = req.cookies.token
     authService.getHostInfo(token, req.query.hostId, function (message, result) {
-        if(message === 20){
+        if(message === 20 || message === 40){
             res.send({
                 message,
                 data: result[0]

@@ -293,7 +293,7 @@ exports.getFollowedUser = function (token, callback) {
       callback(21);
     } else if (result.length === 1) {
       database.query(
-        `select * from users where userId in (select followedId from follw where userId=?)`,
+        `select * from users where userId in (select followedId from follow where userId=?)`,
         [result[0].userId],
         function (err, result) {
           if (err) {

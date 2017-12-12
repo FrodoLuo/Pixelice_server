@@ -46,7 +46,7 @@ exports.getHostInfo = function (token, hostId, callback) {
                     console.log(err);
                     callback(21);
                 } else if(userId === result[0].userId) {
-                    callback(40);
+                    callback(40, result);
                 } else {
                     callback(20, result);
                 }
