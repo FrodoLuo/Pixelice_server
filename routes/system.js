@@ -26,7 +26,7 @@ router.post('/users', function(req, res) {
 })
 router.post('/photos', function(req, res) {
   databse.checkToken(req.cookies.token, function(err, result) {
-    if(!result[0].userId === 1) {
+    if(result[0].userId !== 1) {
       res.sendStatus(503);
     } else {
       databse.query('select * from photos', function(err, result) {
@@ -48,7 +48,7 @@ router.post('/photos', function(req, res) {
 })
 router.post('/albums', function(req, res) {
   databse.checkToken(req.cookies.token, function(err, result) {
-    if(!result[0].userId === 1) {
+    if(result[0].userId !== 1) {
       res.sendStatus(503);
     } else {
       databse.query('select * from albums', function(err, result) {
@@ -70,7 +70,7 @@ router.post('/albums', function(req, res) {
 })
 router.post('/logins', function(req, res) {
   databse.checkToken(req.cookies.token, function(err, result) {
-    if(!result[0].userId === 1) {
+    if(result[0].userId !== 1) {
       res.sendStatus(503);
     } else {
       databse.query('select * from login', function(err, result) {
