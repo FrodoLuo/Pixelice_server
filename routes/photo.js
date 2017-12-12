@@ -169,4 +169,14 @@ router.post('/getLikedPhotos', function (req, res) {
         })
     })
 })
+router.post('/deletePhoto', function (req, res) {
+    const token = req.cookies.token;
+    const photoId = req.body.photoId;
+    photoService.deletePhoto(token, photoId, function (message, result) {
+        res.send({
+            message,
+            data: result
+        });
+    });
+})
 module.exports = router;

@@ -220,7 +220,7 @@ exports.getLikedPhotos = function (token, callback) {
             callback(21);
         } else if (result.length === 1) {
             database.query(
-                `select p.*, u.nickName, u.avatarUrl from photos p join users u on p.userId=u.userId  where p.userId=? and photoId in (select photoId from like where userId=?)`,
+                `select p.*, u.nickName, u.avatarUrl from photos p join users u on p.userId=u.userId  where p.deleted="f" p.userId=? and photoId in (select photoId from like where userId=?)`,
                 [result[0].userId, result[0].userId],
                 function (err, result) {
                     if (err) {
@@ -231,6 +231,23 @@ exports.getLikedPhotos = function (token, callback) {
                     }
                 }
             )
+        }
+    })
+}
+exports.deletePhoto = function (token, photoId, callback) {
+    database.checkToken(token, function (err, result) {
+        if (err) {
+            console.log(err);
+            callback(21);
+        } else if (result.length === 1) {
+            database.insert('update photos set deleted="t" where userId=? and photoId=?', [result[0].userId, photoId], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback(21);
+                } else {
+                    callback(20);
+                }
+            });
         }
     })
 }
