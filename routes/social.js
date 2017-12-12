@@ -101,7 +101,14 @@ router.post('/countUnread', function (req, res) {
     })
   })
 })
-
+router.get('/getHotUsers', function (req, res) {
+  socialService.getHotUsers(function(message, result) {
+    res.send({
+      message,
+      data: result
+    })
+  })
+})
 router.post('/getFollowedUsers', function (req, res) {
   const token = req.cookies.token;
   socialService.getFollowedUser(token, function (message, result) {

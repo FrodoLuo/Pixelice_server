@@ -311,13 +311,13 @@ exports.getFollowedUser = function (token, callback) {
   })
 }
 
-exports.broadToFollowers = function(userId, content) {
-  database.query('select userId from follow where followedId=?', [userId], function(err, result) {
-    if(err){
+exports.broadToFollowers = function (userId, content) {
+  database.query('select userId from follow where followedId=?', [userId], function (err, result) {
+    if (err) {
       console.log(err);
     } else {
       const toIds = [];
-      for(const item of result) {
+      for (const item of result) {
         toIds.push(item.userId);
       }
       broadCast(toIds, content);
@@ -338,10 +338,32 @@ broadCast = function (toIds, content) {
     `,
     params,
     function (err, result) {
-      if(err){
+      if (err) {
         console.log(err);
       }
     }
   )
+}
+exports.getHotUsers = function (callback) {
+  database.query('select * from users where userId > 10 order by followers limit 5', function (err, result) {
+    if (err) {
+      console.log(err);
+      callback(21);
+    } else {
+      var fetchedList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      var index = 0;
+      var re = [];
+      while (re.length < 3) {
+          index = Math.random() * result.length;
+          index = parseInt(index);
+          if (fetchedList[index] === 0) {
+              re.push(result[index]);
+              fetchedList[index] = 1;
+          }
+
+      }
+      callback(20, re);
+    }
+  })
 }
 exports.broadCast = broadCast;
