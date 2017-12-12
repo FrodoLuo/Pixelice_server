@@ -11,6 +11,7 @@ var auth = require('./routes/auth');
 var photo = require('./routes/photo');
 var album = require('./routes/album');
 var social = require('./routes/social');
+var system = require('./routes/system');
 
 var app = express();
 
@@ -32,6 +33,7 @@ app.use('/auth', auth);
 app.use('/photo', photo);
 app.use('/album', album);
 app.use('/social', social);
+app.use('/system', system);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
