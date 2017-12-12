@@ -1,4 +1,5 @@
 var database = require('./dbconnect');
+var fs = require('fs');
 
 exports.getUserInfo = function (token, callback) {
     var sql = '' +
@@ -53,4 +54,30 @@ exports.getHostInfo = function (token, hostId, callback) {
             }
         );
     })
+}
+exports.modifyAvatar = function(file, dir, userId, callback) {
+    var uploadedPath = file.path;
+    var dstPath = dir;
+    dstPath = dstPath + file.originalFilename;
+    //重命名为真实文件名
+    fs.rename(uploadedPath, dstPath, function (err) {
+        if (err) {
+            callback({ message: 21 });
+        } else {
+            const url='http://120.24.225.58/resource'+dstPath.substring(1);
+            database.insert('update users set avatarUrl=? where userId=?', [url, userId], function(err, result) {
+                if(err) {
+                    console.log(err);
+                    callback({
+                        message: 21
+                    })
+                } else {
+                    callback({
+                        message: 20
+                    })
+                }
+            })
+            
+        }
+    });
 }
