@@ -174,7 +174,7 @@ exports.randomPhoto = function (callback) {
             var fetchedList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             var index = 0;
             var re = [];
-            while (re.length < 5) {
+            while (re.length < 5 && re.length < result.length) {
                 index = Math.random() * result.length;
                 index = parseInt(index);
                 if (fetchedList[index] === 0) {
