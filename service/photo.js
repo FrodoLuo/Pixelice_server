@@ -150,7 +150,7 @@ exports.getHotPhotos = function (callback) {
             var fetchedList = {};
             var index = 0;
             var re = [];
-            while (re.length < 9) {
+            while (re.length < 9 && re.length < result.length) {
                 index = Math.random() * result.length;
                 index = parseInt(index);
                 if (fetchedList[index] !== 1) {

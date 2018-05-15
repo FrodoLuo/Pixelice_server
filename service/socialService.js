@@ -353,7 +353,7 @@ exports.getHotUsers = function (callback) {
       var fetchedList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       var index = 0;
       var re = [];
-      while (re.length < 3) {
+      while (re.length < 3 && re.length < result.length) {
           index = Math.random() * result.length;
           index = parseInt(index);
           if (fetchedList[index] === 0) {
