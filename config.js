@@ -45,7 +45,7 @@ exports.DEV = {
         password: 'lyz19960920',
         database: 'pixelice'
     },
-    RESOURCE_URL: 'http://207.148.103.8/resource/'
+    RESOURCE_URL: 'http://207.148.103.8/'
 };
 exports.PRODUCTION = {
     CONNECTION_PRODUCTION: {
@@ -54,5 +54,5 @@ exports.PRODUCTION = {
         password: 'LuoyuzhoU1996',
         database: 'pixelice'
     },
-    RESOURCE_URL: 'http://207.148.103.8/resource/'
+    RESOURCE_URL: 'http://207.148.103.8/'
 };
