@@ -40,7 +40,7 @@ router.post('/modifyAvatar', function(req, res) {
         } else {
             userId = result[0].userId;
             //生成multiparty对象，并配置上传目标路径
-            const uploadDir = './public/avatar/' + result[0].userId + '/files/';
+            const uploadDir = './data/avatar/' + result[0].userId + '/files/';
             var form = new multiparty.Form({ uploadDir: uploadDir });
             if (!fs.existsSync(uploadDir)) {
                 fsHelper.mkdirsSync(uploadDir);
