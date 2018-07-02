@@ -94,16 +94,16 @@ router.post('/messageDetail', function (req, res) {
 })
 router.post('/countUnread', function (req, res) {
   const token = req.cookies.token;
-  res.send({
-    message,
-    data: 10
-  })
-  // socialService.fetchUnreadCount(token, function (message, result) {
-  //   res.send({
-  //     message,
-  //     data: result
-  //   })
+  // res.send({
+  //   message,
+  //   data: 10
   // })
+  socialService.fetchUnreadCount(token, function (message, result) {
+    res.send({
+      message,
+      data: result
+    })
+  })
 })
 router.get('/getHotUsers', function (req, res) {
   socialService.getHotUsers(function(message, result) {
