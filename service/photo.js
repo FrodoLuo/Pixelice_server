@@ -192,9 +192,9 @@ exports.searchPhoto = function (keyString, callback) {
     var photolist = [];
     var queryList = "";
     var keywords = splitKeywords(keyString);
-    queryList = queryList + 'photos.title LIKE "%' + keywords[0] + '%" ' + 'OR photos.intro LIKE "%' + keywords[0] + '%" '+'OR photos.tags LIKE "%' + keywords[0] + '%"';
+    queryList = queryList + 'photos.title LIKE "%' + keywords[0] + '%" ' + 'OR photos.intro LIKE "%' + keywords[0] + '%" '+'OR photos.tags LIKE "%' + keywords[0] + '%" '+'OR users.nickName like "%'+keywords[0] + '%" ';
     for (var i = 1; i < keywords.length; i += 1) {
-        queryList = queryList + ' OR photos.title LIKE "%' + keywords[i] + '%" ' + 'OR photos.intro LIKE "%' + keywords[i] + '%" ' + 'OR photos.tags LIKE "%' + keywords[i] + '%" ';
+        queryList = queryList + ' OR photos.title LIKE "%' + keywords[i] + '%" ' + 'OR photos.intro LIKE "%' + keywords[i] + '%" ' + 'OR photos.tags LIKE "%' + keywords[i] + '%" '+'OR users.nickName like "%'+keywords[i]+'%" ';
     }
     var sql =
         'SELECT photos.*, users.nickName, users.avatarUrl, users.userId ' +
