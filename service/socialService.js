@@ -10,13 +10,16 @@ exports.likePhoto = function (token, photoId, callback) {
           where ? not in (select photoId from like where userId=? and photoId=?)
         `,
         [result[0].userId, photoId, photoId, result[0].userId, photoId],
-        function (err, result) {
+        function (err, result1) {
           if (err) {
             console.log(err);
             callback(21);
           } else {
             callback(20);
             updateLikes(photoId);
+            database.query(`select p.*, u.* from photos p join users u on p.userId = u.userId where p.photoId=${photoId}`, [], function(err, result2) {
+              broadCast(result2[0].userId, `${result[0].nickName}赞了你的照片`);
+            })
           }
         }
       )
