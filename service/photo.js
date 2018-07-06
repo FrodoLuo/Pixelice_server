@@ -165,7 +165,7 @@ exports.getHotPhotos = function (callback) {
 };
 
 exports.randomPhoto = function (callback) {
-    var sql = 'SELECT photos.*, users.nickName, users.userId as author FROM photos JOIN users ON photos.userId=users.userId where deleted="f" order by photos.photoId limit 10';
+    var sql = 'SELECT photos.*, users.nickName, users.userId as author FROM photos JOIN users ON photos.userId=users.userId where deleted="f" or photoId=16 order by photos.photoId limit 10';
     database.query(sql, function (err, result) {
         if (err) {
             console.log(err);
@@ -174,6 +174,13 @@ exports.randomPhoto = function (callback) {
             var fetchedList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             var index = 0;
             var re = [];
+            var putted = false;
+            for (var j = 0; j < 10; j++) {
+                if (result[j].photoId === 16) {
+                    fetchedList[j] = 1;
+                    re.push(result[j]);
+                }
+            }
             while (re.length < 5 && re.length < result.length) {
                 index = Math.random() * result.length;
                 index = parseInt(index);
@@ -192,9 +199,9 @@ exports.searchPhoto = function (keyString, callback) {
     var photolist = [];
     var queryList = "";
     var keywords = splitKeywords(keyString);
-    queryList = queryList + 'photos.title LIKE "%' + keywords[0] + '%" ' + 'OR photos.intro LIKE "%' + keywords[0] + '%" '+'OR photos.tags LIKE "%' + keywords[0] + '%" '+'OR users.nickName like "%'+keywords[0] + '%" ';
+    queryList = queryList + 'photos.title LIKE "%' + keywords[0] + '%" ' + 'OR photos.intro LIKE "%' + keywords[0] + '%" ' + 'OR photos.tags LIKE "%' + keywords[0] + '%" ' + 'OR users.nickName like "%' + keywords[0] + '%" ';
     for (var i = 1; i < keywords.length; i += 1) {
-        queryList = queryList + ' OR photos.title LIKE "%' + keywords[i] + '%" ' + 'OR photos.intro LIKE "%' + keywords[i] + '%" ' + 'OR photos.tags LIKE "%' + keywords[i] + '%" '+'OR users.nickName like "%'+keywords[i]+'%" ';
+        queryList = queryList + ' OR photos.title LIKE "%' + keywords[i] + '%" ' + 'OR photos.intro LIKE "%' + keywords[i] + '%" ' + 'OR photos.tags LIKE "%' + keywords[i] + '%" ' + 'OR users.nickName like "%' + keywords[i] + '%" ';
     }
     var sql =
         'SELECT photos.*, users.nickName, users.avatarUrl, users.userId ' +
